@@ -24,9 +24,7 @@ class NeuralNetwork{
   dot( inputs ){
     var returnValue = []
     for( var input in inputs ){
-      console.log(inputs[ input ])
       for( var inpVal in inputs[ input ] ){
-        console.log(returnValue[ input ])
         if( returnValue[ input ] != undefined ){
           returnValue[ input ] = returnValue[ input ] + ( inputs[ input ][ inpVal ] * this.synaptic_weights[ inpVal ] )
         }else{
@@ -44,12 +42,9 @@ class NeuralNetwork{
 
   train( training_set_inputs, training_set_outputs, number_of_iterations ){
     var i = 0
-    while ( i <= number_of_iterations){
-      var output = []
-      for( var x in training_set_inputs ){
-        this.think( training_set_inputs[x] )
-      }
-      //console.log(output)
+    while ( i < number_of_iterations){
+      var output = this.think( training_set_inputs )
+      console.log(output)
       i++
     }
   }
