@@ -52,8 +52,9 @@ class NeuralNetwork{
         error[ io ] = ( training_set_outputs[ io ] - output[ io ] ) * this.sigmoid( output[ io ], true )
       }
       var adjustment = this.dot( training_set_inputs, error )
+
       for( var ia in this.synaptic_weights ){
-        this.synaptic_weights[ ia ] += error[ ia ]
+        this.synaptic_weights[ ia ] += adjustment[ ia ]
       }
       i++
     }
