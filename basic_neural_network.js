@@ -1,14 +1,20 @@
 class NeuralNetwork{
-  constructor( synapsesTot = 3){
-    this.synaptic_weights = this.randomSynaptic( synapsesTot )
-    //this.synaptic_weights = [8,9,10]
+  constructor(){
+    this.synaptic_weights = this.randomSynaptic( 3, 1 )
   }
 
-  randomSynaptic( synapsesTot ) {
-    var randomSynaptic = []
+  randomSynaptic( synapsesTot, axon ) {
+    var randomSynaptic = new Array()
     var control = 0
+    var arrAxon = new Array()
     while( control < synapsesTot ){
-      randomSynaptic.push( 2 * Math.random() - 1 )
+      var c = 0
+      arrAxon = new Array()
+      while( c < axon ){
+        arrAxon.push( 2 * Math.random() - 1 )
+        c++
+      }
+      randomSynaptic.push( arrAxon )
       control++
     }
     return randomSynaptic
