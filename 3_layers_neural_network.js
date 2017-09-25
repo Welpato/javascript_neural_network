@@ -1,13 +1,22 @@
 class NeuralNetwork{
-  constructor( synapsesTot = 3){
-    this.synaptic_weights = this.randomSynaptic( synapsesTot )
+  constructor(){
+    this.synaptic_weights = this.randomSynaptic( 3, 5 )
+    this.synaptic_weights2 = this.randomSynaptic( 5, 4 )
+    this.synaptic_weights3 = this.randomSynaptic( 4, 1 )
   }
 
-  randomSynaptic( synapsesTot ) {
-    var randomSynaptic = []
+  randomSynaptic( synapsesTot, axon ) {
+    var randomSynaptic = new Array()
     var control = 0
+    var arrAxon = new Array()
     while( control < synapsesTot ){
-      randomSynaptic.push( 2 * Math.random() - 1 )
+      var c = 0
+      arrAxon = new Array()
+      while( c < axon ){
+        arrAxon.push( 2 * Math.random() - 1 )
+        c++
+      }
+      randomSynaptic.push( arrAxon )
       control++
     }
     return randomSynaptic
@@ -64,9 +73,13 @@ class NeuralNetwork{
 var training_set_inputs = [ [ 0,0,1 ], [ 1,1,1 ],[ 1,0,1 ],[ 0,1,1 ] ]
 var training_set_outputs = [ 0,1,1,0 ]
 
-var new_situation = [ [ 0,0,1 ] ]
+var new_situation = [ [ 1,0,0 ] ]
 
 var neural_network = new NeuralNetwork()
+
+console.log(neural_network.synaptic_weights)
+console.log(neural_network.synaptic_weights2)
+console.log(neural_network.synaptic_weights3)
 
 document.write( "Old weights <br>")
 document.write( neural_network.synaptic_weights )
