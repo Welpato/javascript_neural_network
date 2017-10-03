@@ -109,23 +109,23 @@ class NeuralNetwork{
         del4[ x ] = [( training_set_outputs[ x ] - output[ x ] ) * this.sigmoid( output[ x ], true )]
       }
 
-      var del3 = new Array()
-      for( var x in del4 ){
-        del3[ x ] = new Array()
-        for( var y in this.synaptic_weights3 ){
-          del3[ x ][ y ] = ( del4[ x ] * this.synaptic_weights3[ y ] ) * this.sigmoid( a3[ x ][ y ], true )
+      var del3 = this.dot( this.synaptic_weights3, this.transform( del4 ) )
+      var sigA3 = this.transform( this.arraySigmoid( a3, true ) )
+      for( var x in del3 ){
+        for( var y in del3[ x ] ){
+          del3[ x ][ y ] = del3[ x ][ y ] * sigA3[ x ][ y ]
         }
       }
 
       var del2 = this.dot( this.synaptic_weights2, del3 )
-      var sigA2 = this.arraySigmoid( a2, true )
-      for( var x in sigA2 ){
-        for( var y in sigA2[ x ] ){
-          del2[ y ][ x ] = sigA2[ x ][ y ] * del2[ y ][ x ]
+      var sigA2 = this.transform( this.arraySigmoid( a2, true ) )
+      for( var x in del2 ){
+        for ( var y in del2 ){
+          del2[ x ][ y ] = del2[ x ][ y ] * sigA2[ x ][ y ]
         }
       }
 
-      var adjustment3 = this.dot( a3, del4 )
+      var adjustment3 = this.dot( this.transform( a3 ), del4 )
       var adjustment2 = this.dot( this.transform( a2 ), this.transform( del3 ) )
       var adjustment1 = this.dot( this.transform(  training_set_inputs ), this.transform( del2 ) )
 
