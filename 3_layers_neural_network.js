@@ -6,12 +6,12 @@ class NeuralNetwork{
   }
 
   randomSynaptic( synapsesTot, axon ) {
-    var randomSynaptic = new Array()
+    var randomSynaptic = []
     var control = 0
-    var arrAxon = new Array()
+    var arrAxon = []
     while( control < synapsesTot ){
       var c = 0
-      arrAxon = new Array()
+      arrAxon = []
       while( c < axon ){
         arrAxon.push( 2 * Math.random() - 1 )
         c++
@@ -29,29 +29,42 @@ class NeuralNetwork{
     return 1 / ( 1 + Math.pow( 2.718281, -x ) ) //Calculating the exponential with Euller's Number
   }
 
-  //this method need to be redone
+  arraySigmoid( values, derivate = false){
+    for ( var i in values ){
+      for ( var x in values[ i ]){}
+        values[ i ][ x ] =  this.sigmoid( values[ i ][ x ], derivate )
+    }
+    return values
+  }
+
+
   dot( inputs, weights ){
-    var returnValue = []
-    for( var weight in weights ){
-      var i = 0
-      for( var w in weights[ weight ] ){
-        if(inputs[weight][w])
-        if( returnValue[ weight ] != undefined ){
-          returnValue[ weight ] = returnValue[ weight ] + ( inputs[ weight ][ w ] * weights[ w ] )
-        }else{
-          returnValue.push( inputs[ weight ][ w ] * weights[ w ] )
+    var returnValue = new Array()
+    for( var input in inputs ){
+      returnValue.push( new Array() )
+      for( var vInput in inputs[ input ] )  {
+        for( var vWeight in weights[ vInput ] ){
+          if( returnValue[ input ][ vWeight ] == undefined ){
+            returnValue[ input ].push( inputs[ input ][ vInput ] * weights[ vInput ][ vWeight ] )
+          }else{
+            returnValue[ input ][ vWeight ] += inputs[ input ][ vInput ] * weights[ vInput ][ vWeight ]
+          }
         }
-        i++
       }
     }
     return returnValue
   }
 
   think( inputs ){
-    var output = this.dot( inputs, this.synaptic_weights )
-    for( var i in output ){
-      output[ i ] = this.sigmoid( output[ i ] )
-    }
+    var a2 = this.dot( inputs, this.synaptic_weights )
+    a2 = this.arraySigmoid( a2 )
+
+    var a3 = this.dot( a2, this.synaptic_weights2 )
+    a3 = this.arraySigmoid( a3 )
+
+    var output = this.dot( a3, this.synaptic_weights3 )
+    output = this.arraySigmoid( output )
+
     return output
   }
 
@@ -59,37 +72,24 @@ class NeuralNetwork{
     var i = 0
     while ( i < number_of_iterations ){
 
-      //var output = this.think( training_set_inputs )
-      //var error = []
-      //for( var io in output ){
-      //  error[ io ] = ( training_set_outputs[ io ] - output[ io ] ) * this.sigmoid( output[ io ], true )
-      //}
-      //var adjustment = this.dot( training_set_inputs, error )
-      console.log(this.synaptic_weights)
-      var a2 = new Array()
-      for( var sw in this.synaptic_weights ){
-        a2.push(this.dot(training_set_inputs, this.synaptic_weights[sw]))
-      }
-      console.log(a2)
+      var a2 = this.dot( training_set_inputs, this.synaptic_weights )
+      a2 = this.arraySigmoid( a2 )
 
-      //Adjust weights
-      /*for( var ia in this.synaptic_weights ){
-        for( var sw in this.synaptic_weights[ ia ] ){
-            this.synaptic_weights[ ia ][ sw ] += adjustment[ ia ][ sw ]
-        }
-      }
+      var a3 = this.dot( a2, this.synaptic_weights2 )
+      a3 = this.arraySigmoid( a3 )
 
-      for( var ia in this.synaptic_weights2 ){
-        for( var sw in this.synaptic_weights2[ ia ] ){
-            this.synaptic_weights2[ ia ][ sw ] += adjustment2[ ia ][ sw ]
-        }
-      }
+      var output = this.dot( a3, this.synaptic_weights3 )
+      output = this.arraySigmoid( output )
 
-      for( var ia in this.synaptic_weights3 ){
-        for( var sw in this.synaptic_weights3[ ia ] ){
-            this.synaptic_weights3[ ia ][ sw ] += adjustment3[ ia ][ sw ]
-        }
-      }*/
+      var error4 = new Array()
+      for( var x in output ){
+        error4[ x ] = ( training_set_outputs[ x ] - output[ x ] ) * this.sigmoid( output[ x ], true )
+      }
+      console.log(error4)
+      //The rest of this function need to be redone
+
+      var error3 = this.dot( this.synaptic_weights3, error4 ) //This need to be right
+      console.log(error3)
 
       i++
     }
@@ -103,12 +103,6 @@ var new_situation = [ [ 1,0,0 ] ]
 
 var neural_network = new NeuralNetwork()
 
-document.write( "Old weights <br>")
-document.write( neural_network.synaptic_weights )
-document.write( "<br>" )
-document.write( "New weights <br>" )
 neural_network.train( training_set_inputs, training_set_outputs, 1 )
-document.write( neural_network.synaptic_weights )
-document.write( "<br>" )
-document.write( "Result: " )
-document.write( neural_network.think( new_situation ) )
+console.log( "Result: " )
+//console.log( neural_network.think( new_situation ) )
