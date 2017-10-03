@@ -63,9 +63,32 @@ class NeuralNetwork{
     a3 = this.arraySigmoid( a3 )
 
     var output = this.dot( a3, this.synaptic_weights3 )
-    output = this.arraySigmoid( output )
-
+    output = this.sigmoid( output )
     return output
+  }
+
+  transform( array ){
+    var result = new Array()
+    var x = 0
+    while( x < array[0].length ){
+      result.push( new Array() )
+      var y = 0
+      while( y < array.length ){
+        result[ x ].push( array[ y ][ x ] )
+        y++
+      }
+      x++
+    }
+    return result
+  }
+
+  adjust( adjust, weight ){
+    for( var x in adjust ){
+      for( var y in adjust[ x ] ){
+        weight[ x ][ y ] += adjust[ x ][ y ]
+      }
+    }
+    return weight
   }
 
   train( training_set_inputs, training_set_outputs, number_of_iterations ){
@@ -81,15 +104,34 @@ class NeuralNetwork{
       var output = this.dot( a3, this.synaptic_weights3 )
       output = this.arraySigmoid( output )
 
-      var error4 = new Array()
+      var del4 = new Array()
       for( var x in output ){
-        error4[ x ] = ( training_set_outputs[ x ] - output[ x ] ) * this.sigmoid( output[ x ], true )
+        del4[ x ] = [( training_set_outputs[ x ] - output[ x ] ) * this.sigmoid( output[ x ], true )]
       }
-      console.log(error4)
-      //The rest of this function need to be redone
 
-      var error3 = this.dot( this.synaptic_weights3, error4 ) //This need to be right
-      console.log(error3)
+      var del3 = new Array()
+      for( var x in del4 ){
+        del3[ x ] = new Array()
+        for( var y in this.synaptic_weights3 ){
+          del3[ x ][ y ] = ( del4[ x ] * this.synaptic_weights3[ y ] ) * this.sigmoid( a3[ x ][ y ], true )
+        }
+      }
+
+      var del2 = this.dot( this.synaptic_weights2, del3 )
+      var sigA2 = this.arraySigmoid( a2, true )
+      for( var x in sigA2 ){
+        for( var y in sigA2[ x ] ){
+          del2[ y ][ x ] = sigA2[ x ][ y ] * del2[ y ][ x ]
+        }
+      }
+
+      var adjustment3 = this.dot( a3, del4 )
+      var adjustment2 = this.dot( this.transform( a2 ), this.transform( del3 ) )
+      var adjustment1 = this.dot( this.transform(  training_set_inputs ), this.transform( del2 ) )
+
+      this.synaptic_weights = this.adjust( adjustment1, this.synaptic_weights )
+      this.synaptic_weights2 = this.adjust( adjustment2, this.synaptic_weights2 )
+      this.synaptic_weights3 = this.adjust( adjustment3, this.synaptic_weights3 )
 
       i++
     }
@@ -103,6 +145,12 @@ var new_situation = [ [ 1,0,0 ] ]
 
 var neural_network = new NeuralNetwork()
 
-neural_network.train( training_set_inputs, training_set_outputs, 1 )
-console.log( "Result: " )
-//console.log( neural_network.think( new_situation ) )
+document.write( "Old weights <br>")
+document.write( neural_network.synaptic_weights )
+document.write( "<br>" )
+document.write( "New weights <br>" )
+neural_network.train( training_set_inputs, training_set_outputs, 10000 )
+document.write( neural_network.synaptic_weights )
+document.write( "<br>" )
+document.write( "Result: " )
+document.write( neural_network.think( new_situation ) )
