@@ -31,12 +31,12 @@ class NeuralNetwork{
 
   arraySigmoid( values, derivate = false){
     for ( var i in values ){
-      for ( var x in values[ i ]){}
+      for ( var x in values[ i ]){
         values[ i ][ x ] =  this.sigmoid( values[ i ][ x ], derivate )
+      }
     }
     return values
   }
-
 
   dot( inputs, weights ){
     var returnValue = new Array()
@@ -141,16 +141,19 @@ class NeuralNetwork{
 var training_set_inputs = [ [ 0,0,1 ], [ 1,1,1 ],[ 1,0,1 ],[ 0,1,1 ] ]
 var training_set_outputs = [ 0,1,1,0 ]
 
-var new_situation = [ [ 1,0,0 ] ]
+var new_situation = [ [ 0,1,1 ] ]
 
 var neural_network = new NeuralNetwork()
-
 document.write( "Old weights <br>")
 document.write( neural_network.synaptic_weights )
 document.write( "<br>" )
 document.write( "New weights <br>" )
 neural_network.train( training_set_inputs, training_set_outputs, 10000 )
 document.write( neural_network.synaptic_weights )
+document.write( "<br>" )
+document.write( "<br>" )
+document.write( "New situation: " )
+document.write( new_situation )
 document.write( "<br>" )
 document.write( "Result: " )
 document.write( neural_network.think( new_situation ) )
